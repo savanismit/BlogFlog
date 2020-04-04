@@ -1,0 +1,2 @@
+create table user(user_id int NOT NULL AUTO_INCREMENT,f_name varchar(20),l_name varchar(20),user_name varchar(20),email varchar(20),gender varchar(5),password varchar(20),cpassword varchar(20),UNIQUE(user_name,email),PRIMARY KEY(user_id));
+create table blog(blog_id int NOT NULL AUTO_INCREMENT,title varchar(20),author varchar(20),body varchar(2000) ,PRIMARY KEY(blog_id));

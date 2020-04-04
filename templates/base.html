@@ -1,0 +1,22 @@
+{% extends 'bootstrap/base.html' %}
+{% block title %}
+    TechBlog
+{% endblock  %}
+
+{% block navbar %}
+    {% include  '_navbar.html'%}
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="alert alert-{{ category }}">{{message}}</li>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+    {% block sub_body %}
+    
+    {% endblock  %}
+{% endblock  %}
