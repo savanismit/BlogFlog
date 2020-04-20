@@ -1,4 +1,4 @@
-from flask import request,Flask, session,flash, render_template, url_for, redirect, flash 
+from flask import request, Flask, session, flash, render_template, url_for, redirect, flash 
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_bootstrap import Bootstrap
 from flask_mysqldb import MySQL
@@ -10,7 +10,7 @@ app = Flask(__name__)
 Bootstrap(app)
 ckeditor = CKEditor(app)
 
-db = yaml.load(open('db.yaml'))
+db = yaml.load(open('db.yaml'), Loader=yaml.FullLoader)
 app.config['MYSQL_HOST'] = db['mysql_host']
 app.config['MYSQL_PASSWORD'] = db['mysql_pass']
 app.config['MYSQL_USER'] = db['mysql_user']
@@ -30,6 +30,27 @@ def index():
         return render_template('index.html',blogs = blogs)
     cur.close()
     return render_template('index.html',blogs = None)
+
+@app.route('/blogs/<int:id>/')
+def blogs(id):
+    cur = mysql.connection.cursor()
+    result = cur.execute("SELECT *FROM blog WHERE blog_id = {}".format(id))
+    if result > 0 :
+        blog = cur.fetchone()
+        return render_template('blogs.html',blog = blog)
+    return 'Blog not found!'
+
+@app.route('/searchindex/<string:author>/')
+def searchindex(author):
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+        result = cur.execute("SELECT *FROM blog where author = {}".format(author))
+        if result > 0:
+            blogs = cur.fetchall()
+            cur.close()
+            return render_template('searchindex.html',blogs = blogs)
+    cur.close()
+    return render_template('searchindex.html',blogs = None)
 
 @app.route('/register/', methods= ['GET','POST'])
 def register():
@@ -93,15 +114,6 @@ def write_log():
 def about():
     return render_template('about.html')
 
-@app.route('/blogs/<int:id>/')
-def blogs(id):
-    cur = mysql.connection.cursor()
-    result = cur.execute("SELECT *FROM blog WHERE blog_id = {}".format(id))
-    if result > 0 :
-        blog = cur.fetchone()
-        return render_template('blogs.html',blog = blog)
-    return 'Blog not found!'
-
 @app.route('/my-blogs/')
 def my_blogs():
     author = session['f_name'] + ' ' + session['l_name']
@@ -146,6 +158,10 @@ def logout():
     session.clear()
     flash("You have been logged out.",'info')
     return redirect('/')
+
+#@app.errorhandler(404)
+#def page_not_found(error):
+#    return render_template('404.html', meta_title='404'), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
