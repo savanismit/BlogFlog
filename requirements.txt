@@ -50,7 +50,7 @@ prometheus-client==0.7.1
 prompt-toolkit==3.0.4
 Pygments==2.6.1
 PyInstaller==3.6
-PyJWT==1.7.1
+PyJWT==2.4.0
 pylint==2.4.4
 pyrsistent==0.15.7
 python-dotenv==0.12.0
